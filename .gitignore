@@ -13,5 +13,6 @@ dmypy.json
 *.txt
 # Manted
 !config.txt
+!requirements.txt
 !config_example.txt
 *.log
