@@ -30,10 +30,10 @@ install:
 	fi
 
 run:
-	$(PY) $(NAME)
+	$(PY) a_maze_ing/$(NAME)
 
 debug:
-	$(PY) $(DEBUG) $(NAME)
+	$(PY) $(DEBUG) a_maze_ing/$(NAME)
 
 clean:
 	rm -rf $(VENV)
@@ -42,9 +42,9 @@ clean:
 	echo "cache e ambiente virtual removidos!"
 
 lint:
-	$(FLAKE8) $(SRC)
-	$(MYPY) $(SRC) --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
+	$(FLAKE8) . --exclude $(VENV)
+	$(MYPY) . --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs --exclude $(VENV)
 
-list-strict:
-	$(FLAKE8) .
-	$(MYPY) . --strict
+lint-strict:
+	$(FLAKE8) . --exclude $(VENV)
+	$(MYPY) . --strict --exclude $(VENV)
