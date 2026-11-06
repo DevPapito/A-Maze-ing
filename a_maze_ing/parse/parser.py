@@ -1,5 +1,6 @@
 import sys
 from .exceptions_parser import ExceptionParser, ExceptionLengthParser, ExceptionNameParser
+from .config_interpretor import interpretor
 
 def file_validate():
 	try:
@@ -34,7 +35,7 @@ def argument_validate():
 def parser(): # Retorna o dado parsealizado com (sanatizatior/validation) ideal
 	argument_validate()
 	file_validate()
-
-
+	config: Dict[str, str] = interpretor()
+	print(config)
 	# Afirmar que o dataclass nao seja alterado em processo nao esperado
 	# parser deve afirmar esse contrato de retornar o Dataclass corretamente - pos-condition

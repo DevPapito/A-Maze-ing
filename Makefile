@@ -41,7 +41,7 @@ run:
 	-$(PY) a_maze_ing/$(NAME) $(ARGS)
 
 debug:
-	$(PY) $(DEBUG) a_maze_ing/$(NAME)
+	$(PY) $(DEBUG) a_maze_ing/$(NAME) $(ARGS)
 
 clean:
 	rm -rf $(VENV)
