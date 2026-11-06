@@ -29,8 +29,16 @@ install:
 		echo "Dependencias nao encontradas"; \
 	fi
 
+# Permite passar argumentos diretamente (ex: make run config.txt ou make run ARGS=config.txt)
+ifeq (run,$(firstword $(MAKECMDGOALS)))
+  RUN_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
+  $(eval $(RUN_ARGS):;@:)
+endif
+
+ARGS ?= $(RUN_ARGS)
+
 run:
-	$(PY) a_maze_ing/$(NAME)
+	-$(PY) a_maze_ing/$(NAME) $(ARGS)
 
 debug:
 	$(PY) $(DEBUG) a_maze_ing/$(NAME)
