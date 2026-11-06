@@ -74,15 +74,16 @@ make install
 
 ## Usage
 
-Run the main program with a configuration file:
+The recommended and ideal way to run the main program is by using the `Makefile` shortcut with your configuration file argument:
+
+```bash
+make run config.txt
+```
+
+Alternatively, you can run it directly via Python:
 
 ```bash
 python3 a_maze_ing/a_maze_ing.py config.txt
-```
-
-Alternatively, use the Makefile shortcut:
-```bash
-make run
 ```
 
 To run with interactive debugging (`pdb`):
