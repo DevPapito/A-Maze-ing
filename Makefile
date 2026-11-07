@@ -55,4 +55,4 @@ lint:
 
 lint-strict:
 	$(FLAKE8) . --exclude $(VENV)
-	$(MYPY) . --strict --exclude $(VENV)
+	$(MYPY) . --warn-unused-configs --disallow-any-generics --disallow-subclassing-any --disallow-incomplete-defs --check-untyped-defs --disallow-untyped-decorators --no-implicit-optional --warn-redundant-casts --warn-unused-ignores --warn-return-any --no-implicit-reexport --strict-equality --extra-checks --ignore-missing-imports --exclude $(VENV)

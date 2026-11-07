@@ -1,3 +1,3 @@
-from .parser import parser
+from .parser import parser, Config
 
-__all__ = ["parser"]
+__all__ = ["parser", "Config"]
