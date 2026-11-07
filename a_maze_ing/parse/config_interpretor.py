@@ -29,13 +29,13 @@ def lexer(read: str) -> Generator[Tuple[str, str], None, None]:
         if '#' in key or '#' in val:
             raise Exception(
                 f"Error in line {count_line}: "
-                "Invalid commentary syntax in key"
+                "Invalid comment syntax in key"
             )
 
         if not key.isupper():
             raise Exception(
                 f"Error in line {count_line}: "
-                "The key is not snake_case"
+                "The key is not uppercase"
             )
 
         yield key, val

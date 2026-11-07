@@ -17,16 +17,16 @@ $(VENV):
 		$(LOCAL_PY) -m venv $(VENV); \
 		$(PIP) install --upgrade pip; \
 		$(PIP) install flake8 mypy; \
-		echo "Ambiente virtual criado com sucesso!"; \
+		echo "Virtual environment created successfully!"; \
 	else \
-		echo "Ambiente virtual ja criado!"; \
+		echo "Virtual environment already created!"; \
 	fi
 
 install:
 	if [ -f requirements.txt ]; then \
 		$(PIP) install -r requirements.txt; \
 	else \
-		echo "Dependencias nao encontradas"; \
+		echo "Dependencies not found"; \
 	fi
 
 # Permite passar argumentos diretamente (ex: make run config.txt ou make run ARGS=config.txt)
@@ -47,7 +47,7 @@ clean:
 	rm -rf $(VENV)
 	find . -type d -name "__pycache__" -exec rm -rf {} +
 	find . -type f -name "*.pyc" -delete
-	echo "cache e ambiente virtual removidos!"
+	echo "Cache and virtual environment removed!"
 
 lint:
 	$(FLAKE8) . --exclude $(VENV)
@@ -55,4 +55,4 @@ lint:
 
 lint-strict:
 	$(FLAKE8) . --exclude $(VENV)
-	$(MYPY) . --warn-unused-configs --disallow-any-generics --disallow-subclassing-any --disallow-incomplete-defs --check-untyped-defs --disallow-untyped-decorators --no-implicit-optional --warn-redundant-casts --warn-unused-ignores --warn-return-any --no-implicit-reexport --strict-equality --extra-checks --ignore-missing-imports --exclude $(VENV)
+	$(MYPY) . --strict --ignore-missing-imports --exclude $(VENV)
