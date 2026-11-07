@@ -33,9 +33,15 @@ def argument_validate():
 		sys.exit(1)
 
 def parser(): # Retorna o dado parsealizado com (sanatizatior/validation) ideal
+	required_keys = {"WIDTH", "HEIGHT", "ENTRY", "EXIT", "OUTPUT_FILE", "PERFECT"}
 	argument_validate()
 	file_validate()
 	config: Dict[str, str] = interpretor()
 	print(config)
+	parsed_keys = set(config.keys())
+	missing_keys = required_keys - parsed_keys
+	if missing_keys:
+		print(f"Erro: Faltam as seguintes chaves obrigatórias no config.txt: {missing_keys}")
+		sys.exit(1)
 	# Afirmar que o dataclass nao seja alterado em processo nao esperado
 	# parser deve afirmar esse contrato de retornar o Dataclass corretamente - pos-condition
