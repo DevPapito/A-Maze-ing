@@ -40,8 +40,14 @@ Whether you're creating a **perfect maze** (spanning trees with a unique path be
 .
 ├── a_maze_ing/
 │   ├── __init__.py
-│   └── a_maze_ing.py        # Main execution script
-├── Makefile                 # Automation rules (install, run, lint, clean)
+│   ├── a_maze_ing.py        # Main execution script
+│   └── parse/
+│       ├── __init__.py
+│       ├── config_interpretor.py # Configuration lexer and interpreter
+│       ├── exceptions_parser.py  # Parser custom exceptions
+│       └── parser.py            # Configuration validation and parsing
+├── config.txt               # Configuration file example
+├── Makefile                 # Automation rules (install, run, lint, lint-strict, clean)
 ├── README.md                # Project documentation
 ├── requirements.txt         # Project dependencies
 ├── en.subject.pdf           # Official project subject (English)
@@ -88,7 +94,7 @@ python3 a_maze_ing/a_maze_ing.py config.txt
 
 To run with interactive debugging (`pdb`):
 ```bash
-make debug
+make debug config.txt
 ```
 
 ---
@@ -97,14 +103,14 @@ make debug
 
 Configuration files use simple `KEY=VALUE` pairs. Lines starting with `#` are treated as comments.
 
-| Key | Description | Example |
-| :--- | :--- | :--- |
-| `WIDTH` | Maze width (number of columns) | `WIDTH=20` |
-| `HEIGHT` | Maze height (number of rows) | `HEIGHT=15` |
-| `ENTRY` | Entry coordinates `(x,y)` | `ENTRY=0,0` |
-| `EXIT` | Exit coordinates `(x,y)` | `EXIT=19,14` |
-| `OUTPUT_FILE` | Target output file path | `OUTPUT_FILE=maze.txt` |
-| `PERFECT` | Generate a perfect maze (True/False) | `PERFECT=True` |
+| Key | Description | Expected Type | Example |
+| :--- | :--- | :--- | :--- |
+| `WIDTH` | Maze width (number of columns) | Integer (`int`) | `WIDTH=20` |
+| `HEIGHT` | Maze height (number of rows) | Integer (`int`) | `HEIGHT=15` |
+| `ENTRY` | Entry coordinates / position | Float / Number (`float`) | `ENTRY=0,0` (or `0.0`) |
+| `EXIT` | Exit coordinates / position | Float / Number (`float`) | `EXIT=19,14` (or `19.14`) |
+| `OUTPUT_FILE` | Target output file path | String (`str`) | `OUTPUT_FILE=maze.txt` |
+| `PERFECT` | Generate a perfect maze (True/False) | Boolean (`True` / `False`) | `PERFECT=True` |
 
 ---
 
