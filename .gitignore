@@ -8,6 +8,7 @@ __pycache__/
 dmypy.json
 .pytest_cache/
 *.swp
+*.swo
 .vscode/
 *.maze
 *.txt
