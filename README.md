@@ -41,6 +41,9 @@ Whether you're creating a **perfect maze** (spanning trees with a unique path be
 ├── a_maze_ing/
 │   ├── __init__.py
 │   ├── a_maze_ing.py        # Main execution script
+│   ├── maze_interpretor/
+│   │   ├── __init__.py
+│   │   └── maze_generator.py # Maze generator and Cell DTO
 │   └── parse/
 │       ├── __init__.py
 │       ├── config_interpretor.py # Configuration lexer and interpreter
