@@ -1,6 +1,6 @@
 from parse import parser
-from maze_interpretor import MazeGenerator
 from visualizer import Window, Theme
+from visualizer.mock_grid import build_mock_grid
 
 
 def main() -> None:
@@ -12,9 +12,9 @@ def main() -> None:
     sunset = Theme("sunset", 52, 166, 208, 214, 220)
 
     config = parser()
-    maze = MazeGenerator(config)
+    grid = build_mock_grid(config.width, config.height)
     window = Window(config)
-    window.drawer(maze.get_grid(), sunset)
+    window.drawer(grid, sunset)
 
 
 if __name__ == '__main__':
