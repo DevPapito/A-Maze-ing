@@ -2,14 +2,15 @@ import sys
 import os
 from dataclasses import dataclass
 
+
 @dataclass
 class Theme:
-	name: str
-	close_wall: int
-	open_wall: int
-	path_wall: int
-	entry_wall: int
-	exit_wall: int
+    name: str
+    close_wall: int
+    open_wall: int
+    path_wall: int
+    entry_wall: int
+    exit_wall: int
 
 
 class Ansi():
@@ -36,16 +37,11 @@ class Ansi():
 
     def __init__(self) -> None:
         pass
-    # art
 
-    #def paint(self, mode: int, r: int, g: int, b: int) -> str:
     def paint(self, mode: int, id_color: int) -> str:
         if (mode == self.FOREGROUND):
-            #return f"{self.CSI}38;2;{r};{g};{b}m"
             return f"{self.CSI}38;5;{id_color}m"
         return f"{self.CSI}48;5;{id_color}m"
-
-    # Cursor
 
     def move_cursor(self, y: int, x: int) -> str:
         """Move cursor to grid coordinates (y, x),
