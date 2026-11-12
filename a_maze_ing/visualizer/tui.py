@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 @dataclass
 class Theme:
+	name: str
 	close_wall: int
 	open_wall: int
 	path_wall: int

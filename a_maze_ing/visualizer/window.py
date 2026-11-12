@@ -54,6 +54,7 @@ class Window():
 
         self._ansi.print(self._ansi.RESET)
         self._ansi.print(self._ansi.SHOW_CURSOR)
+        print("Debug theme name:", theme.name)
 
         # Restando a mostragem do caminho mais curto entre os pontos ENTRY e EXIT
 
