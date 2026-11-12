@@ -1,15 +1,20 @@
 import sys
-from typing import Optional
+import os
+from dataclasses import dataclass
+
+@dataclass
+class Theme:
+	close_wall: int
+	open_wall: int
+	path_wall: int
+	entry_wall: int
+	exit_wall: int
 
 
 class Ansi():
 
     ESC = "\x1b"
     CSI = f"{ESC}["  # Control Sequence Introducer
-
-    # buffer
-    # CREATE_ALTER_BUFFER = f"{CSI}?1049h"
-    # DESTROY_ALTER_BUFFER = f"{CSI}?1049l"
 
     # Basic styles
     INVERT_FG_BG = f"{CSI}7m"
@@ -32,20 +37,30 @@ class Ansi():
         pass
     # art
 
-    def paint(self, mode: int, r: int, g: int, b: int) -> Optional[str]:
+    #def paint(self, mode: int, r: int, g: int, b: int) -> str:
+    def paint(self, mode: int, id_color: int) -> str:
         if (mode == self.FOREGROUND):
-            return f"{self.CSI}38;2;{r};{g};{b}m"
-        elif (mode == self.BACKGROUND):
-            return f"{self.CSI}48;2;{r};{g};{b}m"
-        return None
+            #return f"{self.CSI}38;2;{r};{g};{b}m"
+            return f"{self.CSI}38;5;{id_color}m"
+        return f"{self.CSI}48;5;{id_color}m"
 
     # Cursor
 
-    def move_cursor(self, line: int, column: int) -> str:
-        return f"{self.CSI}{line};{column}H"  # or ending with f
+    def move_cursor(self, y: int, x: int) -> str:
+        """Move cursor to grid coordinates (y, x),
 
-    def print(self, ansi_sintaxe: str) -> None:
-        if (ansi_sintaxe is None):
-            raise Exception("ansi_sintaxe is not valid!")
-        sys.stdout.write(ansi_sintaxe)
+        automatically applying 1-based indexing and
+        2-character column width scaling.
+        """
+        terminal_row = y + 1
+        terminal_col = (x * 2) + 1
+        return f"{self.CSI}{terminal_row};{terminal_col}H"
+
+    def print(self, string: str) -> None:
+        if (string is None):
+            raise Exception("str is not valid!")
+        sys.stdout.write(string)
         sys.stdout.flush()
+
+    def clear_terminal(self) -> None:
+        os.system("clear")

@@ -1,23 +1,20 @@
 from parse import parser
 from maze_interpretor import MazeGenerator
-from visualizer import Ansi
+from visualizer import Window, Theme
 
 
 def main() -> None:
     """Main entry point for A-Maze-ing."""
+    dark = Theme(232, 235, 238, 28, 124)
+    matrix = Theme(22, 46, 2, 10, 118)
+    neon = Theme(53, 201, 198, 226, 213)
+    ocean = Theme(17, 27, 33, 45, 51)
+    sunset = Theme(52, 166, 208, 214, 220)
+
     config = parser()
-    _maze = MazeGenerator(config)
-    # print(_maze.get_grid())
-    ansi = Ansi()
-    ansi.print(ansi.CLEAR_SCREEN)
-    ansi.print(ansi.HIDE_CURSOR)
-    try:
-        ansi.print(ansi.move_cursor(5, 10))
-        ansi.print("Ola mundo!, esse e o buffer alternativo\n")
-    except Exception:
-        pass
-    finally:
-        ansi.print(ansi.SHOW_CURSOR)
+    maze = MazeGenerator(config)
+    window = Window(config)
+    window.drawer(maze.get_grid(), sunset)
 
 
 if __name__ == '__main__':
