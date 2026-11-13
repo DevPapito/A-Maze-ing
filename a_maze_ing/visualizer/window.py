@@ -141,7 +141,7 @@ class Window:
             y = current[1] + following[1] + 1
             self._paint_tile(y, x, theme.path_wall)
 
-    def drawer(self, grid: List[List[Cell]], theme: Theme) -> None:
+    def drawer(self, grid: List[List[Cell]], theme: Theme, show_path: bool) -> None:
         """Draw the maze, endpoints, and shortest route in the terminal."""
         if len(grid) != self._config.height or any(
             len(row) != self._config.width for row in grid
@@ -186,7 +186,8 @@ class Window:
             )
 
             # 4. Overlay the shortest route without covering the endpoints.
-            self._draw_path(path, theme)
+            if show_path:
+               self._draw_path(path, theme)
             self._ansi.print(self._ansi.move_cursor(visual_height, 0))
         finally:
             self._ansi.print(self._ansi.RESET)
