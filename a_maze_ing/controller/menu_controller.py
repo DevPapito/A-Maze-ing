@@ -1,6 +1,8 @@
 from visualizer.window import Window
-from visualizer.tui import Theme
+from visualizer.tui import Theme, Ansi
 from maze_interpretor.maze_generator import MazeGenerator
+
+import readchar
 
 class Controller():
     def __init__(self, maze_gen: MazeGenerator, window: Window, themes: list) -> None:
@@ -34,17 +36,25 @@ class Controller():
             self._run = False
 
     def menu(self) -> None:
+        ansi = Ansi()
         while (self._run):
             self._window.drawer(self._maze_gen.get_grid(), self._themes[self._position], self._show_path)
+            ansi.print(ansi.paint(ansi.FOREGROUND, self._themes[self._position].exit_wall))
             print(f"Debug show path: {self._show_path}")
             print("=== A-Maze-ing ===")
+            ansi.print(ansi.paint(ansi.FOREGROUND, 252))
             print(f"Theme name: {self._themes[self._position].name}")
             print("1. Re-generate a new maze")
             print("2. Show / Hide the shortest path")
             print("3. Rotate the wall colours")
             print("4. Quit")
+            #ansi.print(ansi.RESET)
             try:
-                user_input = int(input("Choice2 (1-4): "))  # temp
+                #keyboard = readchar.readchar()
+                #print(type(keyboard))
+                user_input = int(input("Choice (1-4): "))  # temp
                 self._switch(user_input)
             except Exception:
                 pass
+            finally:
+               ansi.print(ansi.RESET)
