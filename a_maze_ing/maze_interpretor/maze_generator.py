@@ -34,10 +34,18 @@ class MazeGenerator:
         Dimensions are given by config.height (rows)
         and config.width (cols).
         """
-        self._grid = [
-            [
-                Cell(x=x, y=y, walls=15, passed=False)
-                for x in range(self._config.width)
+        try:
+            from visualizer.mock_grid import build_mock_grid
+            self._grid = build_mock_grid(self._config.width, self._config.height)
+        except Exception:
+            self._grid = [
+                [
+                    Cell(x=x, y=y, walls=15, passed=False)
+                    for x in range(self._config.width)
+                ]
+                for y in range(self._config.height)
             ]
-            for y in range(self._config.height)
-        ]
+
+    def generate(self) -> None:
+        """Temporary generate method using mock grid while maze generator is unfinished."""
+        self.init_grid()
