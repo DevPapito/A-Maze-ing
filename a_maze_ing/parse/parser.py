@@ -17,6 +17,7 @@ class Config:
     exit: float
     output_file: str
     perfect: bool
+    seed: int | None = None
 
 
 def file_validate() -> None:
