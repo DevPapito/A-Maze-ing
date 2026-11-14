@@ -99,7 +99,8 @@ class Window:
             for x, cell in enumerate(row):
                 center_y = (2 * y) + 1
                 center_x = (2 * x) + 1
-                self._paint_tile(center_y, center_x, theme.open_wall)
+                if cell.walls != 0xF:
+                    self._paint_tile(center_y, center_x, theme.open_wall)
 
                 for dx, dy, wall, opposite_wall in DIRECTIONS:
                     if wall not in (EAST, SOUTH):

@@ -36,6 +36,7 @@ class MazeGenerator:
 
     def __init__(self, config: Config) -> None:
         self._config = config
+        self._42_cells: set[tuple[int, int]] = set()
         self.init_grid()
 
     def get_config(self) -> Config:
@@ -87,12 +88,17 @@ class MazeGenerator:
     def generate(self) -> None:
         """Generate the perfect maze using iterative DFS."""
         self.init_grid()
+        self._42_cells = self._get_42_cells()
+        for x, y in self._42_cells:
+            self._grid[y][x].passed = True
 
         if self._config.seed is not None:
             random.seed(self._config.seed)
 
         stack: list[Cell] = []
         start_cell = self._grid[0][0]
+        if start_cell.passed:
+            raise ValueError("The maze is too small to place the 42 pattern.")
         start_cell.passed = True
         stack.append(start_cell)
 
@@ -111,14 +117,44 @@ class MazeGenerator:
         if not self._config.perfect:
             self.add_loops()
 
-    def add_loops(self, chance: float = 0.2) -> None:
-        cx, cy = self._config.width // 2, self._config.height // 2
+    def _get_42_cells(self) -> set[tuple[int, int]]:
+        """Return the centered cells that form the closed-cell 42 pattern."""
+        pattern = (
+            "X.X.XXX",
+            "X.X...X",
+            "XXX.XXX",
+            "..X.X..",
+            "..X.XXX",
+        )
+        pattern_width = len(pattern[0])
+        pattern_height = len(pattern)
 
-        self.remove_walls(self._grid[0][0], self._grid[0][1], EAST)
+        if (self._config.width < pattern_width + 2 or
+                self._config.height < pattern_height + 1):
+            print(
+                "Error: maze too small to display the 42 pattern; "
+                "generating it without the pattern."
+            )
+            return set()
+
+        left = (self._config.width - pattern_width + 1) // 2
+        top = (self._config.height - pattern_height + 1) // 2
+        return {
+            (left + x, top + y)
+            for y, row in enumerate(pattern)
+            for x, value in enumerate(row)
+            if value == "X"
+        }
+
+    def add_loops(self, chance: float = 0.2) -> None:
+        if self._config.width > 1:
+            self.remove_walls(self._grid[0][0], self._grid[0][1], EAST)
 
         for y in range(self._config.height):
             for x in range(self._config.width):
                 cell = self._grid[y][x]
+                if (x, y) in self._42_cells:
+                    continue
                 if cell.walls > 8 and random.random() < chance:
                     directions = [NORTH, SOUTH, EAST, WEST]
                     random.shuffle(directions)
@@ -126,7 +162,13 @@ class MazeGenerator:
                         if self.has_wall(cell, d):
                             dx, dy = DELTA[d]
                             nx, ny = x + dx, y + dy
-                            if 0 <= nx < self._config.width and 0 <= ny < self._config.height:
+                            in_bounds = (
+                                0 <= nx < self._config.width
+                                and 0 <= ny < self._config.height
+                            )
+                            if in_bounds:
+                                if (nx, ny) in self._42_cells:
+                                    continue
                                 neighbor = self._grid[ny][nx]
                                 self.remove_walls(cell, neighbor, d)
                                 break
