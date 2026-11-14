@@ -112,14 +112,21 @@ class MazeGenerator:
             self.add_loops()
 
     def add_loops(self, chance: float = 0.2) -> None:
-        for y, row in enumerate(self._grid):
-            for x, cell in enumerate(row):
-                if x + 1 < self._config.width:
-                    neighbor = self._grid[y][x + 1]
-                    if self.has_wall(cell, EAST) and random.random() < chance:
-                        self.remove_walls(cell, neighbor, EAST)
+        cx, cy = self._config.width // 2, self._config.height // 2
 
-                if y + 1 < self._config.height:
-                    neighbor = self._grid[y + 1][x]
-                    if self.has_wall(cell, SOUTH) and random.random() < chance:
-                        self.remove_walls(cell, neighbor, SOUTH)
+        self.remove_walls(self._grid[0][0], self._grid[0][1], EAST)
+
+        for y in range(self._config.height):
+            for x in range(self._config.width):
+                cell = self._grid[y][x]
+                if cell.walls > 8 and random.random() < chance:
+                    directions = [NORTH, SOUTH, EAST, WEST]
+                    random.shuffle(directions)
+                    for d in directions:
+                        if self.has_wall(cell, d):
+                            dx, dy = DELTA[d]
+                            nx, ny = x + dx, y + dy
+                            if 0 <= nx < self._config.width and 0 <= ny < self._config.height:
+                                neighbor = self._grid[ny][nx]
+                                self.remove_walls(cell, neighbor, d)
+                                break
