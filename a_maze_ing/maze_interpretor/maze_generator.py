@@ -1,3 +1,4 @@
+from collections import deque
 from dataclasses import dataclass
 from typing import List
 from parse.parser import Config
@@ -172,3 +173,54 @@ class MazeGenerator:
                                 neighbor = self._grid[ny][nx]
                                 self.remove_walls(cell, neighbor, d)
                                 break
+
+    def get_shortest_path(
+        self,
+        start: tuple[int, int],
+        goal: tuple[int, int],
+    ) -> list[tuple[int, int]]:
+        """Find the shortest path between two cells in the generated maze."""
+        height = len(self._grid)
+        width = len(self._grid[0]) if self._grid else 0
+        for x, y in (start, goal):
+            if not (0 <= x < width and 0 <= y < height):
+                raise ValueError("Path endpoints must be inside the maze.")
+
+        queue = deque([start])
+        parents: dict[
+            tuple[int, int], tuple[int, int] | None
+        ] = {start: None}
+
+        while queue:
+            x, y = queue.popleft()
+            if (x, y) == goal:
+                break
+
+            cell = self._grid[y][x]
+            for direction in (NORTH, EAST, SOUTH, WEST):
+                dx, dy = DELTA[direction]
+                next_x, next_y = x + dx, y + dy
+                if not (0 <= next_x < width and 0 <= next_y < height):
+                    continue
+                if self.has_wall(cell, direction):
+                    continue
+
+                neighbor_cell = self._grid[next_y][next_x]
+                if self.has_wall(neighbor_cell, OPPOSITE[direction]):
+                    continue
+
+                neighbor = (next_x, next_y)
+                if neighbor not in parents:
+                    parents[neighbor] = (x, y)
+                    queue.append(neighbor)
+
+        if goal not in parents:
+            return []
+
+        path: list[tuple[int, int]] = []
+        current: tuple[int, int] | None = goal
+        while current is not None:
+            path.append(current)
+            current = parents[current]
+        path.reverse()
+        return path

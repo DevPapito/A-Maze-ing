@@ -1,7 +1,6 @@
 import sys
-from collections import deque
 from dataclasses import dataclass
-from typing import Deque, Dict, List, Optional, Tuple
+from typing import List, Tuple
 
 from maze_interpretor.maze_generator import Cell, MazeGenerator
 from parse.parser import Config
@@ -42,51 +41,6 @@ class Window:
         self._ansi.print(self._ansi.move_cursor(y, x))
         self._ansi.print(self._ansi.paint(self._ansi.BACKGROUND, color))
         self._ansi.print("  ")
-
-    def _shortest_path(
-        self,
-        grid: List[List[Cell]],
-        start: Tuple[int, int],
-        goal: Tuple[int, int],
-    ) -> List[Tuple[int, int]]:
-        """Find a shortest route through passages encoded in the cell walls."""
-        queue: Deque[Tuple[int, int]] = deque([start])
-        parents: Dict[
-            Tuple[int, int], Optional[Tuple[int, int]]
-        ] = {start: None}
-        height = len(grid)
-        width = len(grid[0])
-
-        while queue:
-            x, y = queue.popleft()
-            if (x, y) == goal:
-                break
-
-            for dx, dy, wall, opposite_wall in DIRECTIONS:
-                next_x = x + dx
-                next_y = y + dy
-                if not (0 <= next_x < width and 0 <= next_y < height):
-                    continue
-                if grid[y][x].walls & wall:
-                    continue
-                if grid[next_y][next_x].walls & opposite_wall:
-                    continue
-
-                neighbor = (next_x, next_y)
-                if neighbor not in parents:
-                    parents[neighbor] = (x, y)
-                    queue.append(neighbor)
-
-        if goal not in parents:
-            return []
-
-        path: List[Tuple[int, int]] = []
-        current: Optional[Tuple[int, int]] = goal
-        while current is not None:
-            path.append(current)
-            current = parents[current]
-        path.reverse()
-        return path
 
     def _draw_open_passages(
         self, grid: List[List[Cell]], theme: Theme
@@ -160,9 +114,7 @@ class Window:
             if not in_bounds:
                 raise ValueError(f"{name} coordinates are outside the grid")
 
-        #  TODO: SUBSTITUIR PELO MAZE.COMPLETE_MAZE
-        path = self._shortest_path(grid, entry, exit_coord)
-        # path = maze.get_shortest_path()
+        path = maze.get_shortest_path(entry, exit_coord)
         visual_height = (2 * self._config.height) + 1
         visual_width = (2 * self._config.width) + 1
 
