@@ -3,7 +3,7 @@ from collections import deque
 from dataclasses import dataclass
 from typing import Deque, Dict, List, Optional, Tuple
 
-from maze_interpretor.maze_generator import Cell
+from maze_interpretor.maze_generator import Cell, MazeGenerator
 from parse.parser import Config
 from .tui import Ansi, Theme
 
@@ -141,8 +141,9 @@ class Window:
             y = current[1] + following[1] + 1
             self._paint_tile(y, x, theme.path_wall)
 
-    def drawer(self, grid: List[List[Cell]], theme: Theme, show_path: bool) -> None:
+    def drawer(self, maze: MazeGenerator, theme: Theme, show_path: bool) -> None:
         """Draw the maze, endpoints, and shortest route in the terminal."""
+        grid = maze.get_grid()
         if len(grid) != self._config.height or any(
             len(row) != self._config.width for row in grid
         ):
@@ -158,7 +159,9 @@ class Window:
             if not in_bounds:
                 raise ValueError(f"{name} coordinates are outside the grid")
 
+        #  TODO: SUBSTITUIR PELO MAZE.COMPLETE_MAZE
         path = self._shortest_path(grid, entry, exit_coord)
+        # path = maze.get_shortest_path()
         visual_height = (2 * self._config.height) + 1
         visual_width = (2 * self._config.width) + 1
 

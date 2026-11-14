@@ -88,5 +88,5 @@ def parser() -> "Config":
         entry,
         exit,
         output_file,
-        perfect
+        perfect,
     )

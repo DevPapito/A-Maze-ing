@@ -2,6 +2,7 @@ from visualizer.window import Window
 from visualizer.tui import Theme, Ansi
 from maze_interpretor.maze_generator import MazeGenerator
 
+import random
 import readchar
 
 class Controller():
@@ -12,16 +13,10 @@ class Controller():
         self._position = 0
         self._run = True
         self._show_path = False
-        if hasattr(self._maze_gen, 'generate'):
-            self._maze_gen.generate()
 
     def _switch(self, user_input: int) -> None:
         if (user_input == 1):
-            if hasattr(self._maze_gen, 'generate'):
-                self._maze_gen.generate()
-            elif hasattr(self._maze_gen, 'init_grid'):
-                self._maze_gen.init_grid()
-            # Vai regerar o mapa
+            self._maze_gen.generate()
         elif (user_input == 2):
             if not self._show_path:
                 self._show_path = True
@@ -37,8 +32,9 @@ class Controller():
 
     def menu(self) -> None:
         ansi = Ansi()
+        self._maze_gen.generate()
         while (self._run):
-            self._window.drawer(self._maze_gen.get_grid(), self._themes[self._position], self._show_path)
+            self._window.drawer(self._maze_gen, self._themes[self._position], self._show_path)
             ansi.print(ansi.paint(ansi.FOREGROUND, self._themes[self._position].exit_wall))
             print(f"Debug show path: {self._show_path}")
             print("=== A-Maze-ing ===")

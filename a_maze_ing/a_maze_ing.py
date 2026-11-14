@@ -2,7 +2,6 @@ from parse import parser
 from maze_interpretor import MazeGenerator
 from visualizer import Window, Theme
 from controller import Controller
-from visualizer.mock_grid import build_mock_grid # temp
 
 
 def main() -> None:
@@ -17,9 +16,7 @@ def main() -> None:
 
     config = parser()
     maze = MazeGenerator(config)
-    grid = build_mock_grid(config.width, config.height) # temp
     window = Window(config)
-    # window.drawer(grid, sunset, True) just to test
     menu_controller = Controller(maze, window, themes)
     menu_controller.menu()
 
