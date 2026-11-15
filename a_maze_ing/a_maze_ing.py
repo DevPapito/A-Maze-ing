@@ -1,3 +1,5 @@
+"""Launch the A-Maze-ing terminal application."""
+
 from parse import parser
 from maze_interpretor import MazeGenerator
 from visualizer import Window, Theme

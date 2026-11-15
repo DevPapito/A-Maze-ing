@@ -1,15 +1,20 @@
+"""Handle menu input and coordinate maze display and generation."""
+
 from visualizer.window import Window
 from visualizer.tui import Theme, Ansi
 from maze_interpretor.maze_generator import MazeGenerator
 
 
 class Controller:
+    """Manage user interaction with the maze application."""
+
     def __init__(
         self,
         maze_gen: MazeGenerator,
         window: Window,
         themes: list[Theme],
     ) -> None:
+        """Initialize the controller with the maze, display, and themes."""
         self._window = window
         self._themes = themes
         self._maze_gen = maze_gen
@@ -18,6 +23,7 @@ class Controller:
         self._show_path = False
 
     def _switch(self, user_input: int) -> None:
+        """Apply the action selected by the user."""
         if (user_input == 1):
             self._maze_gen.generate()
             self._maze_gen.write_output_file()
@@ -35,6 +41,7 @@ class Controller:
             self._run = False
 
     def menu(self) -> None:
+        """Run the interactive maze menu until the user quits."""
         ansi = Ansi()
         self._maze_gen.generate()
         self._maze_gen.write_output_file()

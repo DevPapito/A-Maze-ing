@@ -1,4 +1,9 @@
+"""Custom exceptions raised while validating parser arguments."""
+
+
 class ExceptionParser(Exception):
+    """Base exception for configuration parser errors."""
+
     def __init__(
         self, message: str = "Unknown parser error"
     ) -> None:
@@ -6,6 +11,8 @@ class ExceptionParser(Exception):
 
 
 class ExceptionLengthParser(ExceptionParser):
+    """Raised when the command-line argument count is invalid."""
+
     def __init__(
         self,
         message: str = (
@@ -17,6 +24,8 @@ class ExceptionLengthParser(ExceptionParser):
 
 
 class ExceptionNameParser(ExceptionParser):
+    """Raised when the configuration file name is invalid."""
+
     def __init__(
         self,
         message: str = (

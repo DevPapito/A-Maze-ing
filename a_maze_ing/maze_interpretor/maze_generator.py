@@ -1,3 +1,5 @@
+"""Generate mazes, find paths, and write maze output files."""
+
 from collections import deque
 from dataclasses import dataclass
 from typing import List
@@ -39,14 +41,17 @@ class MazeGenerator:
     """Class responsible for generating the maze based on configuration."""
 
     def __init__(self, config: Config) -> None:
+        """Create a generator using the supplied maze configuration."""
         self._config = config
         self._42_cells: set[tuple[int, int]] = set()
         self.init_grid()
 
     def get_config(self) -> Config:
+        """Return the configuration used to generate the maze."""
         return self._config
 
     def get_grid(self) -> List[List[Cell]]:
+        """Return the current maze grid."""
         return self._grid
 
     def remove_walls(self, cell1: Cell, cell2: Cell, direction: int) -> None:
@@ -165,7 +170,7 @@ class MazeGenerator:
         }
 
     def remove_dead_ends(self) -> None:
-        """Elimina dead-ends conectando-os a vizinhos válidos."""
+        """Connect dead ends to valid neighboring cells."""
         dead_end_masks = {7, 11, 13, 14}
 
         for cell in self._dead_ends:

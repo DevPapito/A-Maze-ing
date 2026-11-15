@@ -1,9 +1,11 @@
+"""Read and interpret key-value configuration files."""
+
 import sys
 from typing import Dict, Generator, Tuple
 
 
 def lexer(read: str) -> Generator[Tuple[str, str], None, None]:
-    """Analisa o arquivo linha por linha, valida sintaxe e retorna pares."""
+    """Validate configuration syntax and yield key-value pairs."""
     count_line = 1
     for line in read.splitlines():
         line = line.strip()
@@ -43,6 +45,7 @@ def lexer(read: str) -> Generator[Tuple[str, str], None, None]:
 
 
 def interpretor() -> Dict[str, str]:
+    """Read config.txt and return its parsed key-value pairs."""
     read_file = ""
     try:
         with open("config.txt", "r", encoding="utf-8") as file:

@@ -1,3 +1,5 @@
+"""Validate command-line input and build the maze configuration."""
+
 import sys
 from dataclasses import dataclass
 from typing import Dict
@@ -11,6 +13,8 @@ from .config_interpretor import interpretor
 
 @dataclass
 class Config:
+    """Store the dimensions, endpoints, and settings for a maze."""
+
     width: int
     height: int
     entry: tuple[int, int]
@@ -29,6 +33,7 @@ def parse_coordinates(value: str) -> tuple[int, int]:
 
 
 def file_validate() -> None:
+    """Ensure config.txt exists and is readable."""
     try:
         with open("config.txt", "r"):
             pass
@@ -44,6 +49,7 @@ def file_validate() -> None:
 
 
 def argument_validate() -> None:
+    """Validate that config.txt is the sole command-line argument."""
     try:
         if len(sys.argv) != 2:
             raise ExceptionLengthParser()
@@ -61,6 +67,7 @@ def argument_validate() -> None:
 
 
 def parser() -> "Config":
+    """Parse config.txt and return its validated maze configuration."""
     required_keys = {
         "WIDTH", "HEIGHT", "ENTRY", "EXIT", "OUTPUT_FILE", "PERFECT"
     }
