@@ -143,8 +143,8 @@ class MazeGenerator:
     def _get_42_cells(self) -> set[tuple[int, int]]:
         """Return the centered cells that form the closed-cell 42 pattern."""
         pattern = (
-            "X.X.XXX",
-            "X.X...X",
+            "X...XXX",
+            "X.....X",
             "XXX.XXX",
             "..X.X..",
             "..X.XXX",
