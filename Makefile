@@ -1,14 +1,14 @@
 MAKEFLAGS := --silent
 NAME := a_maze_ing.py
+PACKAGE := mazegen
 VENV := venv
 LOCAL_PY := python3
-DEBUG := -m pdb
 PIP := $(VENV)/bin/pip
 PY := $(VENV)/bin/python
 FLAKE8 := $(VENV)/bin/flake8
 MYPY := $(VENV)/bin/mypy
 
-SRC := a_maze_ing
+.PHONY: all install run debug package clean fclean re lint lint-strict
 
 all: $(VENV)
 
@@ -22,15 +22,15 @@ $(VENV):
 		echo "Virtual environment already created!"; \
 	fi
 
-install:
-	if [ -f requirements.txt ]; then \
-		$(PIP) install -r requirements.txt; \
-	else \
-		echo "Dependencies not found"; \
-	fi
+install: $(VENV)
+	$(PIP) install -e .
 
-# Permite passar argumentos diretamente (ex: make run config.txt ou make run ARGS=config.txt)
+# Permite passar argumentos diretamente (ex: make run config.txt)
 ifeq (run,$(firstword $(MAKECMDGOALS)))
+  RUN_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
+  $(eval $(RUN_ARGS):;@:)
+endif
+ifeq (debug,$(firstword $(MAKECMDGOALS)))
   RUN_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
   $(eval $(RUN_ARGS):;@:)
 endif
@@ -38,16 +38,27 @@ endif
 ARGS ?= $(RUN_ARGS)
 
 run:
-	-$(PY) a_maze_ing/$(NAME) $(ARGS)
+	-$(PY) $(NAME) $(ARGS)
 
 debug:
-	$(PY) $(DEBUG) a_maze_ing/$(NAME) $(ARGS)
+	$(PY) -m pdb $(NAME) $(ARGS)
+
+package: $(VENV)
+	$(PIP) install --quiet build
+	$(PY) -m build
+	cp dist/$(PACKAGE)-*.whl .
+	echo "Package built: $(PACKAGE)-*.whl"
 
 clean:
-	rm -rf $(VENV)
-	find . -type d -name "__pycache__" -exec rm -rf {} +
+	find . -type d \( -name __pycache__ -o -name .mypy_cache \) -prune -exec rm -rf {} +
 	find . -type f -name "*.pyc" -delete
-	echo "Cache and virtual environment removed!"
+	echo "Cache removed!"
+
+fclean: clean
+	rm -rf $(VENV) build dist *.egg-info
+	echo "Virtual environment and build artifacts removed!"
+
+re: fclean all
 
 lint:
 	$(FLAKE8) . --exclude $(VENV)

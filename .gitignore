@@ -17,3 +17,6 @@ dmypy.json
 !requirements.txt
 !config_example.txt
 *.log
+build/
+dist/
+*.egg-info/

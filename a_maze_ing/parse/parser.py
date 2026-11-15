@@ -3,12 +3,12 @@
 import sys
 from dataclasses import dataclass
 from typing import Dict
-from .exceptions_parser import (
-    ExceptionParser,
+
+from a_maze_ing.parse.config_interpretor import interpretor
+from a_maze_ing.parse.exceptions_parser import (
     ExceptionLengthParser,
-    ExceptionNameParser
+    ExceptionParser,
 )
-from .config_interpretor import interpretor
 
 
 @dataclass
@@ -29,88 +29,92 @@ def parse_coordinates(value: str) -> tuple[int, int]:
     parts = value.split(",")
     if len(parts) != 2:
         raise ValueError(f"Invalid coordinate pair: {value}")
-    return int(parts[0].strip()), int(parts[1].strip())
-
-
-def file_validate() -> None:
-    """Ensure config.txt exists and is readable."""
     try:
-        with open("config.txt", "r"):
-            pass
-    except FileNotFoundError:
-        print("File <config.txt> not found in the directory!")
-        sys.exit(1)
-    except PermissionError:
-        print("Permission denied to open/read file <config.txt>")
-        sys.exit(1)
-    except Exception as e:
-        print(e)
-        sys.exit(1)
+        x = int(parts[0].strip())
+        y = int(parts[1].strip())
+    except ValueError as e:
+        raise ValueError(f"Invalid coordinate pair: {value}") from e
+    return x, y
 
 
 def argument_validate() -> None:
-    """Validate that config.txt is the sole command-line argument."""
+    """Validate that a single configuration file path was provided."""
+    if len(sys.argv) != 2:
+        raise ExceptionLengthParser()
+
+
+def read_config_file(path: str) -> str:
+    """Return the content of the configuration file at the given path."""
     try:
-        if len(sys.argv) != 2:
-            raise ExceptionLengthParser()
-        if sys.argv[1] != "config.txt":
-            raise ExceptionNameParser()
-    except ExceptionNameParser as e:
-        print(e)
-        sys.exit(1)
-    except ExceptionLengthParser as e:
-        print(e)
-        sys.exit(1)
-    except ExceptionParser as e:
-        print(e)
-        sys.exit(1)
+        with open(path, "r", encoding="utf-8") as file:
+            return file.read()
+    except OSError as e:
+        raise ExceptionParser(
+            f"Cannot read configuration file '{path}': {e}"
+        ) from e
 
 
 def parser() -> "Config":
-    """Parse config.txt and return its validated maze configuration."""
+    """Parse the configuration file and return a validated Config."""
+    argument_validate()
+    content = read_config_file(sys.argv[1])
+    config: Dict[str, str] = interpretor(content)
+
     required_keys = {
         "WIDTH", "HEIGHT", "ENTRY", "EXIT", "OUTPUT_FILE", "PERFECT"
     }
-    argument_validate()
-    file_validate()
-    config: Dict[str, str] = interpretor()
-    parsed_keys = set(config.keys())
-    missing_keys = required_keys - parsed_keys
+    missing_keys = required_keys - config.keys()
     if missing_keys:
-        print(
-            f"Error: Missing required keys in config.txt: {missing_keys}"
+        raise ExceptionParser(
+            "Missing required keys in the configuration file: "
+            f"{missing_keys}"
         )
-        sys.exit(1)
+
     try:
         width = int(config["WIDTH"])
         height = int(config["HEIGHT"])
-        entry = parse_coordinates(config["ENTRY"])
-        exit = parse_coordinates(config["EXIT"])
-        if not (0 <= entry[0] < width and 0 <= entry[1] < height):
-            raise ValueError(
-                f"ENTRY coordinates {entry} are outside grid bounds "
-                f"(Width: {width}, Height: {height})"
-            )
-        if not (0 <= exit[0] < width and 0 <= exit[1] < height):
-            raise ValueError(
-                f"EXIT coordinates {exit} are outside grid bounds "
-                f"(Width: {width}, Height: {height})"
-            )
-        output_file = str(config["OUTPUT_FILE"])
-        perfect_str = config["PERFECT"].strip().lower()
-        if perfect_str not in ("true", "false"):
-            raise ValueError(
-                f"Invalid boolean value for PERFECT: {config['PERFECT']}"
-            )
-        perfect = perfect_str == "true"
     except ValueError as e:
-        print(f"Type error: {e}")
-        sys.exit(1)
+        raise ExceptionParser(
+            f"WIDTH and HEIGHT must be integers: {e}"
+        ) from e
+    if width < 1 or height < 1:
+        raise ExceptionParser("WIDTH and HEIGHT must be positive integers")
+
+    entry = parse_coordinates(config["ENTRY"])
+    exit_coord = parse_coordinates(config["EXIT"])
+    if not (0 <= entry[0] < width and 0 <= entry[1] < height):
+        raise ExceptionParser(
+            f"ENTRY coordinates {entry} are outside grid bounds "
+            f"(Width: {width}, Height: {height})"
+        )
+    if not (0 <= exit_coord[0] < width and 0 <= exit_coord[1] < height):
+        raise ExceptionParser(
+            f"EXIT coordinates {exit_coord} are outside grid bounds "
+            f"(Width: {width}, Height: {height})"
+        )
+
+    output_file = config["OUTPUT_FILE"]
+    perfect_str = config["PERFECT"].strip().lower()
+    if perfect_str not in ("true", "false"):
+        raise ExceptionParser(
+            f"Invalid boolean value for PERFECT: {config['PERFECT']}"
+        )
+    perfect = perfect_str == "true"
+
+    seed: int | None = None
+    seed_str = config.get("SEED")
+    if seed_str is not None:
+        try:
+            seed = int(seed_str)
+        except ValueError as e:
+            raise ExceptionParser(f"SEED must be an integer: {e}") from e
+
     return Config(
         width,
         height,
         entry,
-        exit,
+        exit_coord,
         output_file,
         perfect,
+        seed,
     )

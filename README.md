@@ -40,15 +40,17 @@ The primary goal of A-Maze-ing is to explore foundational graph traversal algori
 
 ```text
 .
+├── a_maze_ing.py                   # Main execution entrypoint (python3 a_maze_ing.py config.txt)
+├── mazegen.py                      # Reusable, standalone maze generation module (pip package)
 ├── a_maze_ing/
 │   ├── __init__.py
-│   ├── a_maze_ing.py             # Main execution entrypoint
+│   ├── a_maze_ing.py              # Application main(): wiring and error handling
 │   ├── controller/
 │   │   ├── __init__.py
 │   │   └── menu_controller.py    # Menu & interaction controller
 │   ├── maze_interpretor/
 │   │   ├── __init__.py
-│   │   └── maze_generator.py     # Maze generation, BFS solver, and Cell DTO
+│   │   └── maze_generator.py     # Adapter: "42" pattern + output file writer
 │   ├── parse/
 │   │   ├── __init__.py
 │   │   ├── config_interpretor.py # Configuration lexer and file interpreter
@@ -61,8 +63,8 @@ The primary goal of A-Maze-ing is to explore foundational graph traversal algori
 ├── .gitignore                    # Git ignore rules
 ├── config.txt                    # Default configuration file example
 ├── LICENSE.md                    # Project license
-├── Makefile                      # Automation rules (install, run, lint, clean)
-├── pyproject.toml                # Project configuration and tool settings
+├── Makefile                      # Automation rules (install, run, package, lint)
+├── pyproject.toml                # mazegen package build configuration
 └── README.md                     # Project documentation
 ```
 
@@ -95,15 +97,23 @@ Run the main program with your configuration file:
 make run config.txt
 ```
 
-Alternatively, run directly via Python:
+Alternatively, run directly via Python (as required by the subject):
 
 ```bash
-python3 a_maze_ing/a_maze_ing.py config.txt
+python3 a_maze_ing.py config.txt
 ```
 
 To run with interactive debugging (`pdb`):
 ```bash
 make debug config.txt
+```
+
+### Build the Reusable Package
+
+Build the `mazegen` pip package (`.whl` is copied to the repository root):
+
+```bash
+make package
 ```
 
 ---
@@ -120,6 +130,7 @@ Configuration files use simple `KEY=VALUE` format. Blank lines and lines startin
 | `EXIT` | Exit coordinates `x,y` | Integer pair (`int,int`) | `EXIT=19,14` |
 | `OUTPUT_FILE` | Target output file path | String (`str`) | `OUTPUT_FILE=maze.txt` |
 | `PERFECT` | Generate a perfect maze (True/False) | Boolean (`bool`) | `PERFECT=False` |
+| `SEED` | Optional generation seed (reproducibility) | Integer (`int`) | `SEED=42` |
 
 ---
 
@@ -184,10 +195,37 @@ A-Maze-ing relies on graph theory algorithms for both maze generation and pathfi
 ## Code Reusability
 
 Modular design principles were strictly followed to maximize code reusability across the project:
+- **`mazegen.py`**: The entire maze generation engine (and its documentation) lives in a single standalone file with no third-party dependencies. It is packaged as `mazegen-1.0.0-py3-none-any.whl` so a future project can install and reuse it (see below).
 - **`Config` Parser (`parse/parser.py` & `config_interpretor.py`)**: Designed as a standalone configuration schema validator. It can be easily imported and reused by any module or future GUI/CLI interface requiring validated maze parameters.
-- **`Cell` DTO and Grid Management (`maze_interpretor/maze_generator.py`)**: The `Cell` data class and bitmask wall representation (North, East, South, West) provide a generic, reusable grid abstraction that decouples maze topology from rendering engines.
-- **`MazeGenerator.get_shortest_path()`**: Implemented as a clean, self-contained graph solver method that takes arbitrary start and goal coordinates within any valid grid, allowing it to be reused for multi-point routing or interactive pathfinding.
 - **Renderers (`visualizer/tui.py` & `window.py`)**: Separated into independent display adapters that consume the grid state without modifying business logic.
+- **Application adapter (`maze_interpretor/maze_generator.py`)**: A thin layer that binds the reusable `mazegen` engine to this project's needs (the closed-cell "42" pattern and the output file format).
+
+### Reusable Module Documentation (`mazegen`)
+
+`mazegen.py` exposes a single class, `MazeGenerator`. After installing the wheel (`make package`, then `pip install mazegen-1.0.0-py3-none-any.whl`):
+
+```python
+from mazegen import MazeGenerator
+
+# Instantiate and generate: size, seed, and mode are all custom parameters.
+maze = MazeGenerator(width=20, height=15, seed=42, perfect=True)
+maze.generate()
+
+# Access the generated structure: grid[y][x] is a Cell whose `walls`
+# bitmask encodes closed walls (North=1, East=2, South=4, West=8).
+grid = maze.get_grid()
+
+# Access a solution: shortest path between any two cells (BFS).
+path = maze.get_shortest_path((0, 0), (19, 14))
+```
+
+Custom parameters:
+- `width`, `height`: maze dimensions in cells (must be positive).
+- `seed`: optional seed for reproducible generation.
+- `perfect=True`: spanning tree with a unique path between any two points; `perfect=False`: dead ends are opened to create loops (a playable board).
+- `reserved_cells`: optional set of `(x, y)` coordinates that are never carved and stay fully closed (e.g. to embed the "42" pattern).
+
+The same documentation is available as the `mazegen.py` module docstring and in the class/method docstrings.
 
 ---
 

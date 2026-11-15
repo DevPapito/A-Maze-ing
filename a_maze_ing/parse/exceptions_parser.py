@@ -1,7 +1,11 @@
-"""Custom exceptions raised while validating parser arguments."""
+"""Custom exceptions raised while validating the configuration.
+
+They derive from ValueError so callers can handle them together with
+the other configuration errors.
+"""
 
 
-class ExceptionParser(Exception):
+class ExceptionParser(ValueError):
     """Base exception for configuration parser errors."""
 
     def __init__(
@@ -17,19 +21,7 @@ class ExceptionLengthParser(ExceptionParser):
         self,
         message: str = (
             "Invalid argument length. "
-            "Only one argument is allowed: <config.txt>"
-        ),
-    ) -> None:
-        super().__init__(message)
-
-
-class ExceptionNameParser(ExceptionParser):
-    """Raised when the configuration file name is invalid."""
-
-    def __init__(
-        self,
-        message: str = (
-            'The configuration file name is not "config.txt"'
+            "Only one argument is allowed: <config file>"
         ),
     ) -> None:
         super().__init__(message)

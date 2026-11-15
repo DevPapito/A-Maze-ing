@@ -3,19 +3,10 @@
 import sys
 from typing import List, Tuple
 
-try:
-    from a_maze_ing.maze_interpretor.maze_generator import Cell, MazeGenerator
-    from a_maze_ing.parse.parser import Config
-except ImportError:
-    from maze_interpretor.maze_generator import Cell, MazeGenerator
-    from parse.parser import Config
-from .tui import Ansi, Theme
-
-
-NORTH = 0x1
-EAST = 0x2
-SOUTH = 0x4
-WEST = 0x8
+from a_maze_ing.maze_interpretor.maze_generator import MazeGenerator
+from a_maze_ing.parse.parser import Config
+from a_maze_ing.visualizer.tui import Ansi, Theme
+from mazegen import ALL_WALLS, EAST, NORTH, SOUTH, WEST, Cell
 
 DIRECTIONS: Tuple[Tuple[int, int, int, int], ...] = (
     (0, -1, NORTH, SOUTH),
@@ -35,9 +26,11 @@ class Window:
 
     def _paint_tile(self, y: int, x: int, color: int) -> None:
         """Paint one two-character tile at visual-grid coordinates."""
-        self._ansi.print(self._ansi.move_cursor(y, x))
-        self._ansi.print(self._ansi.paint(self._ansi.BACKGROUND, color))
-        self._ansi.print("  ")
+        self._ansi.print(
+            self._ansi.move_cursor(y, x)
+            + self._ansi.paint(self._ansi.BACKGROUND, color)
+            + "  "
+        )
 
     def _draw_open_passages(
         self, grid: List[List[Cell]], theme: Theme
@@ -50,7 +43,7 @@ class Window:
             for x, cell in enumerate(row):
                 center_y = (2 * y) + 1
                 center_x = (2 * x) + 1
-                if cell.walls != 0xF:
+                if cell.walls != ALL_WALLS:
                     self._paint_tile(center_y, center_x, theme.open_wall)
 
                 for dx, dy, wall, opposite_wall in DIRECTIONS:
@@ -116,10 +109,7 @@ class Window:
             if not in_bounds:
                 raise ValueError(f"{name} coordinates are outside the grid")
 
-        try:
-            path = maze.get_shortest_path(entry, exit_coord)
-        except ValueError:
-            print("Codigo de entry e/ou exit invalidos")
+        path = maze.get_shortest_path(entry, exit_coord)
         visual_height = (2 * self._config.height) + 1
         visual_width = (2 * self._config.width) + 1
 

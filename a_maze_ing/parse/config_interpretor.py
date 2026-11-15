@@ -1,71 +1,53 @@
 """Read and interpret key-value configuration files."""
 
-import sys
 from typing import Dict, Generator, Tuple
+
+from a_maze_ing.parse.exceptions_parser import ExceptionParser
 
 
 def lexer(read: str) -> Generator[Tuple[str, str], None, None]:
     """Validate configuration syntax and yield key-value pairs."""
-    count_line = 1
-    for line in read.splitlines():
+    for line_number, line in enumerate(read.splitlines(), start=1):
         line = line.strip()
 
         if not line or line.startswith('#'):
-            count_line += 1
             continue
 
         if '=' not in line:
-            raise Exception(
-                f"Error in line {count_line}: No character '=' found"
+            raise ExceptionParser(
+                f"Error in line {line_number}: no '=' character found"
             )
 
         tokens = line.split("=")
         if len(tokens) != 2:
-            raise Exception(
-                f"Error in line {count_line}: "
-                "Invalid syntax or multiple '=' tokens"
+            raise ExceptionParser(
+                f"Error in line {line_number}: "
+                "invalid syntax or multiple '=' tokens"
             )
 
         key, val = tokens[0].strip(), tokens[1].strip()
 
         if '#' in key or '#' in val:
-            raise Exception(
-                f"Error in line {count_line}: "
-                "Invalid comment syntax in key"
+            raise ExceptionParser(
+                f"Error in line {line_number}: "
+                "invalid comment syntax inside key or value"
             )
 
         if not key.isupper():
-            raise Exception(
-                f"Error in line {count_line}: "
-                "The key is not uppercase"
+            raise ExceptionParser(
+                f"Error in line {line_number}: the key is not uppercase"
             )
 
         yield key, val
-        count_line += 1
 
 
-def interpretor() -> Dict[str, str]:
-    """Read config.txt and return its parsed key-value pairs."""
-    read_file = ""
-    try:
-        with open("config.txt", "r", encoding="utf-8") as file:
-            read_file = file.read()
-    except Exception as e:
-        print(f"Error opening file: {e}", file=sys.stderr)
-        sys.exit(1)
-
+def interpretor(content: str) -> Dict[str, str]:
+    """Parse configuration text and return its key-value pairs."""
     config: Dict[str, str] = {}
-
-    try:
-        for key, val in lexer(read_file):
-            if key in config:
-                raise Exception(
-                    f"Error: Duplicate configuration key '{key}'"
-                )
-            config[key] = val
-
-    except Exception as e:
-        print(e, file=sys.stderr)
-        sys.exit(1)
-
+    for key, val in lexer(content):
+        if key in config:
+            raise ExceptionParser(
+                f"Duplicate configuration key '{key}'"
+            )
+        config[key] = val
     return config

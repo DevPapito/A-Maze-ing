@@ -1,13 +1,8 @@
 """Handle menu input and coordinate maze display and generation."""
 
-try:
-    from a_maze_ing.visualizer.window import Window
-    from a_maze_ing.visualizer.tui import Theme, Ansi
-    from a_maze_ing.maze_interpretor.maze_generator import MazeGenerator
-except ImportError:
-    from visualizer.window import Window
-    from visualizer.tui import Theme, Ansi
-    from maze_interpretor.maze_generator import MazeGenerator
+from a_maze_ing.maze_interpretor.maze_generator import MazeGenerator
+from a_maze_ing.visualizer.tui import Ansi, Theme
+from a_maze_ing.visualizer.window import Window
 
 
 class Controller:
@@ -29,20 +24,14 @@ class Controller:
 
     def _switch(self, user_input: int) -> None:
         """Apply the action selected by the user."""
-        if (user_input == 1):
+        if user_input == 1:
             self._maze_gen.generate()
             self._maze_gen.write_output_file()
-        elif (user_input == 2):
-            if not self._show_path:
-                self._show_path = True
-            else:
-                self._show_path = False
-        elif (user_input == 3):
-            if (len(self._themes) - 1 == self._position):
-                self._position = 0
-            else:
-                self._position += 1
-        elif (user_input == 4):
+        elif user_input == 2:
+            self._show_path = not self._show_path
+        elif user_input == 3:
+            self._position = (self._position + 1) % len(self._themes)
+        elif user_input == 4:
             self._run = False
 
     def menu(self) -> None:
@@ -50,7 +39,7 @@ class Controller:
         ansi = Ansi()
         self._maze_gen.generate()
         self._maze_gen.write_output_file()
-        while (self._run):
+        while self._run:
             self._window.drawer(
                 self._maze_gen,
                 self._themes[self._position],
@@ -72,7 +61,14 @@ class Controller:
             try:
                 try:
                     user_input = int(input("Choice (1-4): "))
-                except ValueError:
+                except (ValueError, TypeError):
+                    print("Please enter a number from 1 to 4.")
+                    continue
+                except (EOFError, KeyboardInterrupt):
+                    print("\nInput closed, exiting.")
+                    self._run = False
+                    continue
+                if user_input not in (1, 2, 3, 4):
                     print("Please enter a number from 1 to 4.")
                     continue
                 self._switch(user_input)
