@@ -86,6 +86,16 @@ def parser() -> "Config":
         height = int(config["HEIGHT"])
         entry = parse_coordinates(config["ENTRY"])
         exit = parse_coordinates(config["EXIT"])
+        if not (0 <= entry[0] < width and 0 <= entry[1] < height):
+            raise ValueError(
+                f"ENTRY coordinates {entry} are outside grid bounds "
+                f"(Width: {width}, Height: {height})"
+            )
+        if not (0 <= exit[0] < width and 0 <= exit[1] < height):
+            raise ValueError(
+                f"EXIT coordinates {exit} are outside grid bounds "
+                f"(Width: {width}, Height: {height})"
+            )
         output_file = str(config["OUTPUT_FILE"])
         perfect_str = config["PERFECT"].strip().lower()
         if perfect_str not in ("true", "false"):

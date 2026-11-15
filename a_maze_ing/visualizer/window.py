@@ -112,7 +112,10 @@ class Window:
             if not in_bounds:
                 raise ValueError(f"{name} coordinates are outside the grid")
 
-        path = maze.get_shortest_path(entry, exit_coord)
+        try:
+            path = maze.get_shortest_path(entry, exit_coord)
+        except ValueError:
+            print("Codigo de entry e/ou exit invalidos")
         visual_height = (2 * self._config.height) + 1
         visual_width = (2 * self._config.width) + 1
 

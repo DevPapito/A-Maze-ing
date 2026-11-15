@@ -101,6 +101,11 @@ class MazeGenerator:
         self.init_grid()
         self._dead_ends: list[Cell] = []
         self._42_cells = self._get_42_cells()
+        if self._config.exit in self._42_cells:
+            raise ValueError(
+                f"EXIT coordinates {self._config.exit} "
+                "cannot be inside the 42 pattern."
+            )
         for x, y in self._42_cells:
             self._grid[y][x].passed = True
 

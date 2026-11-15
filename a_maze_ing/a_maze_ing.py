@@ -1,5 +1,6 @@
 """Launch the A-Maze-ing terminal application."""
 
+import sys
 from parse import parser
 from maze_interpretor import MazeGenerator
 from visualizer import Window, Theme
@@ -16,11 +17,15 @@ def main() -> None:
         Theme("Sandstorm", 52, 223, 202, 1, 2),
     ]
 
-    config = parser()
-    maze = MazeGenerator(config)
-    window = Window(config)
-    menu_controller = Controller(maze, window, themes)
-    menu_controller.menu()
+    try:
+        config = parser()
+        maze = MazeGenerator(config)
+        window = Window(config)
+        menu_controller = Controller(maze, window, themes)
+        menu_controller.menu()
+    except ValueError as e:
+        print(f"Error: {e}")
+        sys.exit(1)
 
 
 if __name__ == '__main__':
