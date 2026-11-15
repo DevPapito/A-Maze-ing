@@ -78,8 +78,7 @@ def parser() -> "Config":
     missing_keys = required_keys - parsed_keys
     if missing_keys:
         print(
-            "Erro: Faltam as seguintes chaves obrigatórias "
-            f"no config.txt: {missing_keys}"
+            f"Error: Missing required keys in config.txt: {missing_keys}"
         )
         sys.exit(1)
     try:

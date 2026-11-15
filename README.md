@@ -40,22 +40,28 @@ Whether you're creating a **perfect maze** (spanning trees with a unique path be
 .
 ├── a_maze_ing/
 │   ├── __init__.py
-│   ├── a_maze_ing.py        # Main execution script
+│   ├── a_maze_ing.py          # Main execution script
+│   ├── controller/
+│   │   ├── __init__.py
+│   │   └── menu_controller.py # Menu & interaction controller
 │   ├── maze_interpretor/
 │   │   ├── __init__.py
-│   │   └── maze_generator.py # Maze generator and Cell DTO
-│   └── parse/
+│   │   └── maze_generator.py  # Maze generator and Cell DTO
+│   ├── parse/
+│   │   ├── __init__.py
+│   │   ├── config_interpretor.py # Configuration lexer and interpreter
+│   │   ├── exceptions_parser.py  # Parser custom exceptions
+│   │   └── parser.py            # Configuration validation and parsing
+│   └── visualizer/
 │       ├── __init__.py
-│       ├── config_interpretor.py # Configuration lexer and interpreter
-│       ├── exceptions_parser.py  # Parser custom exceptions
-│       └── parser.py            # Configuration validation and parsing
+│       ├── tui.py               # Terminal User Interface (TUI)
+│       └── window.py            # Graphical window / visualizer
+├── .gitignore               # Git ignore rules
 ├── config.txt               # Configuration file example
 ├── Makefile                 # Automation rules (install, run, lint, lint-strict, clean)
+├── maze.txt                 # Generated maze output file example
 ├── README.md                # Project documentation
-├── requirements.txt         # Project dependencies
-├── en.subject.pdf           # Official project subject (English)
-├── pt.subject.md            # Official project subject (Portuguese Markdown)
-└── pt.subject.pdf           # Official project subject (Portuguese PDF)
+└── requirements.txt         # Project dependencies
 ```
 
 ---

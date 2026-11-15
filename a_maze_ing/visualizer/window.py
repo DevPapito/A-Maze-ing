@@ -1,7 +1,6 @@
 """Draw mazes and their routes in a terminal window."""
 
 import sys
-from dataclasses import dataclass
 from typing import List, Tuple
 
 from maze_interpretor.maze_generator import Cell, MazeGenerator
@@ -25,16 +24,9 @@ DIRECTIONS: Tuple[Tuple[int, int, int, int], ...] = (
 class Window:
     """Render a maze grid, endpoints, and optional route."""
 
-    @dataclass
-    class Setting:
-        """Placeholder for window rendering settings."""
-
-        pass
-
     def __init__(self, config: Config) -> None:
         """Initialize the renderer with the maze configuration."""
         self._ansi = Ansi()
-        self._setting = self.Setting
         self._config = config
 
     def _paint_tile(self, y: int, x: int, color: int) -> None:
@@ -157,7 +149,3 @@ class Window:
 
         if not path:
             sys.stderr.write("No path exists between ENTRY and EXIT.\n")
-
-    def clear(self) -> None:
-        """Perform any required cleanup; none is currently needed."""
-        pass
