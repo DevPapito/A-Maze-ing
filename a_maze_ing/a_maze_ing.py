@@ -7,11 +7,11 @@ from controller import Controller
 def main() -> None:
     """Main entry point for A-Maze-ing."""
     themes = [
-        Theme("dark", 232, 235, 238, 28, 124),
-        Theme("matrix", 22, 46, 2, 28, 124),
-        Theme("neon", 53, 201, 198, 28, 124),
-        Theme("ocean", 17, 27, 33, 28, 124),
-        Theme("sunset", 52, 166, 208, 28, 124),
+        Theme("Dark", 233, 252, 243, 1, 2),
+        Theme("Flash", 252, 233, 240, 1, 2),
+        Theme("Vice city", 234, 201, 123, 1, 2),
+        Theme("Wood art", 95, 238, 137, 1, 2),
+        Theme("Sandstorm", 52, 223, 202, 1, 2),
     ]
 
     config = parser()
