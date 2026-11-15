@@ -1,10 +1,16 @@
 """Launch the A-Maze-ing terminal application."""
 
 import sys
-from parse import parser
-from maze_interpretor import MazeGenerator
-from visualizer import Window, Theme
-from controller import Controller
+try:
+    from a_maze_ing.parse import parser
+    from a_maze_ing.maze_interpretor import MazeGenerator
+    from a_maze_ing.visualizer import Window, Theme
+    from a_maze_ing.controller import Controller
+except ImportError:
+    from parse import parser
+    from maze_interpretor import MazeGenerator
+    from visualizer import Window, Theme
+    from controller import Controller
 
 
 def main() -> None:

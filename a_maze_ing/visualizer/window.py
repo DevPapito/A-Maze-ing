@@ -3,8 +3,12 @@
 import sys
 from typing import List, Tuple
 
-from maze_interpretor.maze_generator import Cell, MazeGenerator
-from parse.parser import Config
+try:
+    from a_maze_ing.maze_interpretor.maze_generator import Cell, MazeGenerator
+    from a_maze_ing.parse.parser import Config
+except ImportError:
+    from maze_interpretor.maze_generator import Cell, MazeGenerator
+    from parse.parser import Config
 from .tui import Ansi, Theme
 
 

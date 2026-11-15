@@ -3,7 +3,10 @@
 from collections import deque
 from dataclasses import dataclass
 from typing import List
-from parse.parser import Config
+try:
+    from a_maze_ing.parse.parser import Config
+except ImportError:
+    from parse.parser import Config
 import random
 
 

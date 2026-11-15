@@ -1,8 +1,13 @@
 """Handle menu input and coordinate maze display and generation."""
 
-from visualizer.window import Window
-from visualizer.tui import Theme, Ansi
-from maze_interpretor.maze_generator import MazeGenerator
+try:
+    from a_maze_ing.visualizer.window import Window
+    from a_maze_ing.visualizer.tui import Theme, Ansi
+    from a_maze_ing.maze_interpretor.maze_generator import MazeGenerator
+except ImportError:
+    from visualizer.window import Window
+    from visualizer.tui import Theme, Ansi
+    from maze_interpretor.maze_generator import MazeGenerator
 
 
 class Controller:
