@@ -1,8 +1,8 @@
+*This project has been created as part of the 42 curriculum by jzampier, pezio.*
+
 <div align="center">
 
 # A-Maze-ing
-
-This project has been created as part of the 42 curriculum by jzampier, pezio
 
 [![Python Version](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
 [![Style: flake8](https://img.shields.io/badge/code%20style-flake8-green.svg)](https://flake8.pyflake.org/)
@@ -13,24 +13,26 @@ This project has been created as part of the 42 curriculum by jzampier, pezio
 
 ---
 
-## About
+## Description
 
-**A-Maze-ing** is a robust maze generator and solver developed as part of the 42 curriculum. The project combines computer science, graph theory, and algorithmic design to generate customized, randomized mazes from configuration files, solve them, and output both machine-readable hexadecimal representations and visual ASCII/graphical renders.
+**A-Maze-ing** is a robust, modular maze generator, solver, and visualizer developed as part of the 42 curriculum. The project combines graph theory, algorithmic design, and software engineering best practices to generate customized, randomized mazes from configuration files, solve them using optimal pathfinding, and output both machine-readable hexadecimal representations and rich visual renders.
 
-Whether you're creating a **perfect maze** (spanning trees with a unique path between any two points) or a **Pac-Man style board** (featuring multiple loops, open centers, ghost corners, and the iconic `42` pattern), A-Maze-ing brings structure out of chaos.
+The primary goal of A-Maze-ing is to explore foundational graph traversal algorithms, parse structured configuration files robustly, handle custom exceptions gracefully, and provide dual operational modes:
+1. **Perfect Mazes (`PERFECT=True`)**: Spanning trees featuring exactly one unique path between any two points (no loops or cycles).
+2. **Pac-Man Style Mazes (`PERFECT=False`)**: Multi-path mazes featuring loops, open central zones, ghost/super-pellet corners, and minimal dead ends.
 
 ---
 
-## Features
+## Features & Advanced Features
 
-- **Configurable Generation**: Fully customized dimensions, entry/exit points, and generation modes via simple configuration files.
-- **Dual Maze Modes**:
-  - **Perfect Mazes (`PERFECT=True`)**: Exactly one unique path between entry and exit (no loops).
-  - **Pac-Man Style (`PERFECT=False`)**: Fully reachable corridors, multiple loops, open 2x2/3x2 zones, ghost/super-pellet corners, and minimal dead ends.
-- **Hexadecimal Wall Encoding**: Encodes cardinal walls (North, East, South, West) into compact hex digits per cell.
-- **Shortest Path Solver**: Computes and exports the optimal shortest route (`N`, `E`, `S`, `W`) from entry to exit.
-- **Visual Rendering**: Clear terminal/ASCII visualization showing walls, start, end, and solution path.
-- **Production-Grade Quality**: Strict adherence to Python type hints (`mypy` compliant) and PEP 8 style guidelines (`flake8`).
+- **Configurable Generation**: Fully customizable dimensions, entry/exit coordinates, output file paths, and generation mode via clean `config.txt` files.
+- **Embedded 42 Logo Pattern**: Automatically embeds a centered, closed-cell `42` structural pattern into the maze layout when dimensions allow.
+- **Hexadecimal Wall Encoding**: Encodes cardinal walls (North=1, East=2, South=4, West=8) into compact hexadecimal digits (0–F) per cell.
+- **Shortest Path Solver (BFS)**: Computes and exports the optimal shortest route (`N`, `E`, `S`, `W`) from entry to exit.
+- **Dual Visualizers**:
+  - **Terminal User Interface (TUI)**: Interactive or static ASCII/Unicode grid rendering in the terminal.
+  - **Graphical Window**: Visual window renderer for graphical inspection.
+- **Production-Grade Quality**: Strict adherence to Python type hints (`mypy` strict compliant) and PEP 8 style guidelines (`flake8`).
 
 ---
 
@@ -40,62 +42,60 @@ Whether you're creating a **perfect maze** (spanning trees with a unique path be
 .
 ├── a_maze_ing/
 │   ├── __init__.py
-│   ├── a_maze_ing.py          # Main execution script
+│   ├── a_maze_ing.py             # Main execution entrypoint
 │   ├── controller/
 │   │   ├── __init__.py
-│   │   └── menu_controller.py # Menu & interaction controller
+│   │   └── menu_controller.py    # Menu & interaction controller
 │   ├── maze_interpretor/
 │   │   ├── __init__.py
-│   │   └── maze_generator.py  # Maze generator and Cell DTO
+│   │   └── maze_generator.py     # Maze generation, BFS solver, and Cell DTO
 │   ├── parse/
 │   │   ├── __init__.py
-│   │   ├── config_interpretor.py # Configuration lexer and interpreter
-│   │   ├── exceptions_parser.py  # Parser custom exceptions
-│   │   └── parser.py            # Configuration validation and parsing
+│   │   ├── config_interpretor.py # Configuration lexer and file interpreter
+│   │   ├── exceptions_parser.py  # Custom parser and validation exceptions
+│   │   └── parser.py             # Configuration validation and schema parsing
 │   └── visualizer/
 │       ├── __init__.py
-│       ├── tui.py               # Terminal User Interface (TUI)
-│       └── window.py            # Graphical window / visualizer
-├── .gitignore               # Git ignore rules
-├── config.txt               # Configuration file example
-├── Makefile                 # Automation rules (install, run, lint, lint-strict, clean)
-├── maze.txt                 # Generated maze output file example
-├── README.md                # Project documentation
-└── requirements.txt         # Project dependencies
+│       ├── tui.py                # Terminal User Interface (TUI) renderer
+│       └── window.py             # Graphical window renderer
+├── .gitignore                    # Git ignore rules
+├── config.txt                    # Default configuration file example
+├── LICENSE.md                    # Project license
+├── Makefile                      # Automation rules (install, run, lint, clean)
+├── pyproject.toml                # Project configuration and tool settings
+└── README.md                     # Project documentation
 ```
 
 ---
 
-## Getting Started
+## Instructions
 
 ### Prerequisites
 
 - **Python 3.10** or higher
 - `make` utility
 
-### Installation
+### Installation & Setup
 
-Clone the repository and set up the environment using the provided `Makefile`:
+Clone the repository and set up the development environment using the provided `Makefile`:
 
 ```bash
-# 1. Create virtual environment and install development tools (flake8, mypy)
+# 1. Initialize virtual environment and development tools
 make
 
-# 2. Install project dependencies from requirements.txt
+# 2. Install project dependencies
 make install
 ```
 
----
+### Execution
 
-## Usage
-
-The recommended and ideal way to run the main program is by using the `Makefile` shortcut with your configuration file argument:
+Run the main program with your configuration file:
 
 ```bash
 make run config.txt
 ```
 
-Alternatively, you can run it directly via Python:
+Alternatively, run directly via Python:
 
 ```bash
 python3 a_maze_ing/a_maze_ing.py config.txt
@@ -110,16 +110,19 @@ make debug config.txt
 
 ## Configuration Format (`config.txt`)
 
-Configuration files use simple `KEY=VALUE` pairs. Lines starting with `#` are treated as comments.
+Configuration files use simple `KEY=VALUE` format. Blank lines and lines starting with `#` are ignored as comments.
 
 | Key | Description | Expected Type | Example |
 | :--- | :--- | :--- | :--- |
 | `WIDTH` | Maze width (number of columns) | Integer (`int`) | `WIDTH=20` |
 | `HEIGHT` | Maze height (number of rows) | Integer (`int`) | `HEIGHT=15` |
-| `ENTRY` | Entry coordinates / position | Float / Number (`float`) | `ENTRY=0,0` (or `0.0`) |
-| `EXIT` | Exit coordinates / position | Float / Number (`float`) | `EXIT=19,14` (or `19.14`) |
+| `ENTRY` | Entry coordinates `x,y` | Integer pair (`int,int`) | `ENTRY=0,0` |
+| `EXIT` | Exit coordinates `x,y` | Integer pair (`int,int`) | `EXIT=19,14` |
 | `OUTPUT_FILE` | Target output file path | String (`str`) | `OUTPUT_FILE=maze.txt` |
-| `PERFECT` | Generate a perfect maze (True/False) | Boolean (`True` / `False`) | `PERFECT=True` |
+| `PERFECT` | Generate a perfect maze (True/False) | Boolean (`bool`) | `PERFECT=False` |
+
+---
+
 
 ---
 
@@ -137,25 +140,96 @@ The generated output file encodes each cell's walls as a single hexadecimal digi
 *(Example: `3` means South and West walls are closed; `A` means East and West walls are closed).*
 
 Following the grid lines and a blank line, the file outputs:
-1. Entry coordinates
-2. Exit coordinates
-3. Shortest path sequence using directions (`N`, `E`, `S`, `W`)
+1. Entry coordinates (`x,y`)
+2. Exit coordinates (`x,y`)
+3. Shortest path sequence using cardinal directions (`N`, `E`, `S`, `W`).
 
 ---
 
-## Code Quality & Linting
+## Code Quality & Verification
 
-To ensure codebase integrity and type safety, run the strict verification checks:
+To verify codebase integrity, type safety, and linting standards, run:
 
 ```bash
-# Run standard linting (flake8 + mypy)
+# Run linters and type checkers (flake8 + mypy)
 make lint
 
 # Run strict type checking
 make lint-strict
-```
 
-To clean up build artifacts, caches, and virtual environments:
-```bash
+# Clean build artifacts
 make clean
 ```
+
+## Algorithm Choices & Justification
+
+A-Maze-ing relies on graph theory algorithms for both maze generation and pathfinding. Below is the technical justification for the chosen algorithms:
+
+### 1. Maze Generation: Randomized Depth-First Search (Iterative Backtracker)
+- **Algorithm**: We use an iterative DFS with a stack to generate perfect mazes as spanning trees.
+- **Why we chose it**: 
+  - **Single Solution Guarantee**: DFS creates long, winding corridors with relatively few dead ends, making it ideal for generating classic "perfect mazes" where every cell is reachable with exactly one unique path between any two points.
+  - **Stack-Based Iteration**: Implementing DFS iteratively with an explicit stack avoids Python's recursion depth limit errors on large maze grids (e.g., 100x100 or larger).
+  - **Pac-Man Extension**: For `PERFECT=False` mode, we augment the generator with a dead-end removal pass that systematically punctures walls of dead-end cells into adjacent corridors, creating loops and open spaces reminiscent of retro arcade boards.
+
+### 2. Maze Solving: Breadth-First Search (BFS)
+- **Algorithm**: We use a queue (`collections.deque`) to perform level-order graph traversal from the entry coordinate to the exit coordinate.
+- **Why we chose it**:
+  - **Shortest Path Optimality**: In unweighted graphs (where every corridor edge has an equal cost of 1), **Breadth-First Search guarantees the absolute shortest path** from the start node to the goal node.
+  - **Completeness**: BFS is guaranteed to find a path if one exists, efficiently exploring all reachable nodes level-by-level without getting trapped in infinite depth loops.
+  - **Performance**: Operating in $O(V + E)$ time complexity (where $V$ is the number of cells and $E$ is the open passages), BFS executes near-instantly even on large grids. Reconstruction of the path is efficiently handled by maintaining a parent pointer dictionary.
+
+---
+
+## Code Reusability
+
+Modular design principles were strictly followed to maximize code reusability across the project:
+- **`Config` Parser (`parse/parser.py` & `config_interpretor.py`)**: Designed as a standalone configuration schema validator. It can be easily imported and reused by any module or future GUI/CLI interface requiring validated maze parameters.
+- **`Cell` DTO and Grid Management (`maze_interpretor/maze_generator.py`)**: The `Cell` data class and bitmask wall representation (North, East, South, West) provide a generic, reusable grid abstraction that decouples maze topology from rendering engines.
+- **`MazeGenerator.get_shortest_path()`**: Implemented as a clean, self-contained graph solver method that takes arbitrary start and goal coordinates within any valid grid, allowing it to be reused for multi-point routing or interactive pathfinding.
+- **Renderers (`visualizer/tui.py` & `window.py`)**: Separated into independent display adapters that consume the grid state without modifying business logic.
+
+---
+
+## Team & Project Management
+
+### Team Roles
+- **`jzampier` (Joao)**: Maze generation engine, BFS shortest path solver.
+- **`pezio` (Pietro)**: Configuration parser, 42 pattern embedding, and TUI/window visualizers, exception handling framework, CLI controllers.
+
+### Anticipated Planning & Evolution
+1. **Phase 1 (Research & Design)**: Studied graph traversal algorithms (DFS vs BFS vs A*), defined the 4-bit hexadecimal bitmask standard, and drafted configuration grammar rules.
+2. **Phase 2 (Core Implementation)**: Developed the configuration parser, robust exception system, and the DFS maze generation engine.
+3. **Phase 3 (Solving & Advanced Features)**: Implemented the BFS shortest path solver, dead-end removal for Pac-Man mode, and the centered `42` logo integration.
+4. **Phase 4 (Visualizers & Quality Assurance)**: Built the TUI and graphical visualizers, added automated tests, and ensured strict compliance with `flake8` and `mypy` strict typing.
+
+### What Worked Well & What Could Be Improved
+- **What worked well**:
+  - Clear separation of concerns between parsing, generation, solving, and visualization.
+  - Strict typing (`mypy`) caught potential null reference bugs early during refactoring.
+  - Iterative DFS prevented recursion stack overflows on large grids.
+- **What could be improved**:
+  - Adding asynchronous visualization animation frames for step-by-step BFS exploration in future iterations.
+  - Extending configuration options to support custom color themes in the TUI.
+
+### Specific Tools Used
+- **Language**: Python 3.10+
+- **Build & Automation**: Make / Makefile
+- **Type Checking**: `mypy` (strict mode)
+- **Linting**: `flake8`
+- **Version Control**: Git & GitHub
+
+---
+
+## Resources & AI Usage
+
+### Classic References
+- Cormen, T. H., Leiserson, C. E., Rivest, R. L., & Stein, C. *Introduction to Algorithms* (Graph Traversal, BFS, DFS).
+- Red Blob Games. *Pathfinding and Maze Generation Tutorials*.
+- 42 School Subject Guidelines for *A-Maze-ing*.
+
+### AI Usage Disclosure
+Artificial Intelligence (specifically Gemini) was utilized during the development of this project for specific supportive tasks:
+- **Documentation & Structuring**: Assisting in structuring and refining markdown documentation (including this `README.md`) to meet the comprehensive 42 curriculum evaluation rubric.
+- **Type Hinting & Docstrings**: Reviewing Python type hints and PEP 257 docstring compliance to ensure rigorous `mypy` strict compatibility.
+- **Test Case Brainstorming**: Discussing edge cases for configuration parsing errors and invalid maze dimensions.
