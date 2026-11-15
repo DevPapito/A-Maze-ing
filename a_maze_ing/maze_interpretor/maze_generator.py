@@ -4,6 +4,7 @@ from typing import List
 from parse.parser import Config
 import random
 
+
 @dataclass
 class Cell:
     """Represents a single cell in the maze grid."""
@@ -12,6 +13,7 @@ class Cell:
     y: int
     walls: int = 15
     passed: bool = False
+
 
 NORTH = 1
 EAST = 2
@@ -32,6 +34,7 @@ DELTA = {
     WEST: (-1, 0)
 }
 
+
 class MazeGenerator:
     """Class responsible for generating the maze based on configuration."""
 
@@ -47,7 +50,9 @@ class MazeGenerator:
         return self._grid
 
     def remove_walls(self, cell1: Cell, cell2: Cell, direction: int) -> None:
-        """ Remove walls between two adjacent cells in the specified direction."""
+        """Remove walls between two adjacent cells in the specified
+        direction.
+        """
         cell1.walls &= ~direction
         cell2.walls &= ~OPPOSITE[direction]
 
@@ -71,7 +76,7 @@ class MazeGenerator:
         ]
 
     def get_unvisited_neighbors(self, cell: Cell) -> list[tuple[Cell, int]]:
-        """Returns a list of tuples (neighbor, direction) that hasn't been passed"""
+        """Return unpassed neighbors and their direction."""
         neighbors: list[tuple[Cell, int]] = []
         directions = DELTA
 
@@ -121,7 +126,10 @@ class MazeGenerator:
                     self._dead_ends.append(current)
                     is_advancing = False
                 stack.pop()
-        if start_cell.walls in {7,11,13,14} and start_cell not in self._dead_ends:
+        if (
+            start_cell.walls in {7, 11, 13, 14}
+            and start_cell not in self._dead_ends
+        ):
             self._dead_ends.append(start_cell)
 
         if not self._config.perfect:

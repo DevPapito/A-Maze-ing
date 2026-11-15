@@ -2,11 +2,14 @@ from visualizer.window import Window
 from visualizer.tui import Theme, Ansi
 from maze_interpretor.maze_generator import MazeGenerator
 
-import random
-import readchar
 
-class Controller():
-    def __init__(self, maze_gen: MazeGenerator, window: Window, themes: list) -> None:
+class Controller:
+    def __init__(
+        self,
+        maze_gen: MazeGenerator,
+        window: Window,
+        themes: list[Theme],
+    ) -> None:
         self._window = window
         self._themes = themes
         self._maze_gen = maze_gen
@@ -36,9 +39,17 @@ class Controller():
         self._maze_gen.generate()
         self._maze_gen.write_output_file()
         while (self._run):
-            self._window.drawer(self._maze_gen, self._themes[self._position], self._show_path)
-            ansi.print(ansi.paint(ansi.FOREGROUND, self._themes[self._position].exit_wall))
-            print(f"Debug show path: {self._show_path}")
+            self._window.drawer(
+                self._maze_gen,
+                self._themes[self._position],
+                self._show_path,
+            )
+            ansi.print(
+                ansi.paint(
+                    ansi.FOREGROUND,
+                    self._themes[self._position].exit_wall,
+                )
+            )
             print("=== A-Maze-ing ===")
             ansi.print(ansi.paint(ansi.FOREGROUND, 252))
             print(f"Theme name: {self._themes[self._position].name}")
@@ -46,7 +57,6 @@ class Controller():
             print("2. Show / Hide the shortest path")
             print("3. Rotate the wall colours")
             print("4. Quit")
-            #ansi.print(ansi.RESET)
             try:
                 try:
                     user_input = int(input("Choice (1-4): "))

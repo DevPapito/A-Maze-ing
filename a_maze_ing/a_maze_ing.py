@@ -20,5 +20,6 @@ def main() -> None:
     menu_controller = Controller(maze, window, themes)
     menu_controller.menu()
 
+
 if __name__ == '__main__':
     main()
