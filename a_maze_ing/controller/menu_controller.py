@@ -17,6 +17,7 @@ class Controller():
     def _switch(self, user_input: int) -> None:
         if (user_input == 1):
             self._maze_gen.generate()
+            self._maze_gen.write_output_file()
         elif (user_input == 2):
             if not self._show_path:
                 self._show_path = True
@@ -33,6 +34,7 @@ class Controller():
     def menu(self) -> None:
         ansi = Ansi()
         self._maze_gen.generate()
+        self._maze_gen.write_output_file()
         while (self._run):
             self._window.drawer(self._maze_gen, self._themes[self._position], self._show_path)
             ansi.print(ansi.paint(ansi.FOREGROUND, self._themes[self._position].exit_wall))
@@ -46,11 +48,11 @@ class Controller():
             print("4. Quit")
             #ansi.print(ansi.RESET)
             try:
-                #keyboard = readchar.readchar()
-                #print(type(keyboard))
-                user_input = int(input("Choice (1-4): "))  # temp
+                try:
+                    user_input = int(input("Choice (1-4): "))
+                except ValueError:
+                    print("Please enter a number from 1 to 4.")
+                    continue
                 self._switch(user_input)
-            except Exception:
-                pass
             finally:
-               ansi.print(ansi.RESET)
+                ansi.print(ansi.RESET)

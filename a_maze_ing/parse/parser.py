@@ -13,11 +13,19 @@ from .config_interpretor import interpretor
 class Config:
     width: int
     height: int
-    entry: float
-    exit: float
+    entry: tuple[int, int]
+    exit: tuple[int, int]
     output_file: str
     perfect: bool
     seed: int | None = None
+
+
+def parse_coordinates(value: str) -> tuple[int, int]:
+    """Parse a coordinate pair in the form x,y."""
+    parts = value.split(",")
+    if len(parts) != 2:
+        raise ValueError(f"Invalid coordinate pair: {value}")
+    return int(parts[0].strip()), int(parts[1].strip())
 
 
 def file_validate() -> None:
@@ -70,8 +78,8 @@ def parser() -> "Config":
     try:
         width = int(config["WIDTH"])
         height = int(config["HEIGHT"])
-        entry = float(config["ENTRY"].replace(',', '.'))
-        exit = float(config["EXIT"].replace(',', '.'))
+        entry = parse_coordinates(config["ENTRY"])
+        exit = parse_coordinates(config["EXIT"])
         output_file = str(config["OUTPUT_FILE"])
         perfect_str = config["PERFECT"].strip().lower()
         if perfect_str not in ("true", "false"):

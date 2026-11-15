@@ -31,11 +31,6 @@ class Window:
         self._setting = self.Setting
         self._config = config
 
-    def _coordinates(self, value: float) -> Tuple[int, int]:
-        """Return x and y using the configuration's existing float encoding."""
-        parts = str(value).split(".")
-        return int(parts[0]), int(parts[1])
-
     def _paint_tile(self, y: int, x: int, color: int) -> None:
         """Paint one two-character tile at visual-grid coordinates."""
         self._ansi.print(self._ansi.move_cursor(y, x))
@@ -104,8 +99,8 @@ class Window:
         ):
             raise ValueError("Grid dimensions do not match the configuration")
 
-        entry = self._coordinates(self._config.entry)
-        exit_coord = self._coordinates(self._config.exit)
+        entry = self._config.entry
+        exit_coord = self._config.exit
         for name, (x, y) in (("ENTRY", entry), ("EXIT", exit_coord)):
             in_bounds = (
                 0 <= x < self._config.width

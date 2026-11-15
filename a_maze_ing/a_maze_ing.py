@@ -8,10 +8,10 @@ def main() -> None:
     """Main entry point for A-Maze-ing."""
     themes = [
         Theme("dark", 232, 235, 238, 28, 124),
-        Theme("matrix", 22, 46, 2, 10, 118),
-        Theme("neon", 53, 201, 198, 226, 213),
-        Theme("ocean", 17, 27, 33, 45, 51),
-        Theme("sunset", 52, 166, 208, 214, 220),
+        Theme("matrix", 22, 46, 2, 28, 124),
+        Theme("neon", 53, 201, 198, 28, 124),
+        Theme("ocean", 17, 27, 33, 28, 124),
+        Theme("sunset", 52, 166, 208, 28, 124),
     ]
 
     config = parser()

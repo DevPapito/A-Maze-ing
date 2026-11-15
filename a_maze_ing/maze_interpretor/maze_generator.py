@@ -89,6 +89,7 @@ class MazeGenerator:
     def generate(self) -> None:
         """Generate the perfect maze using iterative DFS."""
         self.init_grid()
+        self._dead_ends: list[Cell] = []
         self._42_cells = self._get_42_cells()
         for x, y in self._42_cells:
             self._grid[y][x].passed = True
@@ -103,6 +104,8 @@ class MazeGenerator:
         start_cell.passed = True
         stack.append(start_cell)
 
+        is_advancing = True
+
         while stack:
             current = stack[-1]
             neighbors = self.get_unvisited_neighbors(current)
@@ -112,11 +115,17 @@ class MazeGenerator:
                 self.remove_walls(current, next_cell, direction)
                 next_cell.passed = True
                 stack.append(next_cell)
+                is_advancing = True
             else:
+                if is_advancing:
+                    self._dead_ends.append(current)
+                    is_advancing = False
                 stack.pop()
+        if start_cell.walls in {7,11,13,14} and start_cell not in self._dead_ends:
+            self._dead_ends.append(start_cell)
 
         if not self._config.perfect:
-            self.add_loops()
+            self.remove_dead_ends()
 
     def _get_42_cells(self) -> set[tuple[int, int]]:
         """Return the centered cells that form the closed-cell 42 pattern."""
@@ -147,32 +156,29 @@ class MazeGenerator:
             if value == "X"
         }
 
-    def add_loops(self, chance: float = 0.2) -> None:
-        if self._config.width > 1:
-            self.remove_walls(self._grid[0][0], self._grid[0][1], EAST)
+    def remove_dead_ends(self) -> None:
+        """Elimina dead-ends conectando-os a vizinhos válidos."""
+        dead_end_masks = {7, 11, 13, 14}
 
-        for y in range(self._config.height):
-            for x in range(self._config.width):
-                cell = self._grid[y][x]
-                if (x, y) in self._42_cells:
-                    continue
-                if cell.walls > 8 and random.random() < chance:
-                    directions = [NORTH, SOUTH, EAST, WEST]
-                    random.shuffle(directions)
-                    for d in directions:
-                        if self.has_wall(cell, d):
-                            dx, dy = DELTA[d]
-                            nx, ny = x + dx, y + dy
-                            in_bounds = (
-                                0 <= nx < self._config.width
-                                and 0 <= ny < self._config.height
-                            )
-                            if in_bounds:
-                                if (nx, ny) in self._42_cells:
-                                    continue
-                                neighbor = self._grid[ny][nx]
-                                self.remove_walls(cell, neighbor, d)
-                                break
+        for cell in self._dead_ends:
+            if cell.walls not in dead_end_masks:
+                continue
+
+            directions = [NORTH, SOUTH, EAST, WEST]
+            random.shuffle(directions)
+
+            for d in directions:
+                if self.has_wall(cell, d):
+                    dx, dy = DELTA[d]
+                    nx, ny = cell.x + dx, cell.y + dy
+                    if (
+                        0 <= nx < self._config.width
+                        and 0 <= ny < self._config.height
+                        and (nx, ny) not in self._42_cells
+                    ):
+                        neighbor = self._grid[ny][nx]
+                        self.remove_walls(cell, neighbor, d)
+                        break
 
     def get_shortest_path(
         self,
@@ -224,3 +230,40 @@ class MazeGenerator:
             current = parents[current]
         path.reverse()
         return path
+
+    def write_output_file(self) -> None:
+        """Write the maze, endpoints, and route to the configured file."""
+        entry = self._config.entry
+        exit_coord = self._config.exit
+        if entry == exit_coord:
+            raise ValueError("ENTRY and EXIT must be different.")
+
+        path = self.get_shortest_path(entry, exit_coord)
+        if not path:
+            raise ValueError("No path exists between ENTRY and EXIT.")
+
+        rows = [
+            "".join(f"{cell.walls:X}" for cell in row)
+            for row in self._grid
+        ]
+        direction_symbols = {
+            (0, -1): "N",
+            (1, 0): "E",
+            (0, 1): "S",
+            (-1, 0): "W",
+        }
+        directions = "".join(
+            direction_symbols[
+                (next_cell[0] - cell[0], next_cell[1] - cell[1])
+            ]
+            for cell, next_cell in zip(path, path[1:])
+        )
+        lines = rows + [
+            "",
+            f"{entry[0]},{entry[1]}",
+            f"{exit_coord[0]},{exit_coord[1]}",
+            directions,
+        ]
+
+        with open(self._config.output_file, "w", encoding="utf-8") as file:
+            file.write("\n".join(lines) + "\n")
